@@ -34,6 +34,7 @@ function update(event) {
   output.value += getTierString('t30');
   output.value += getTierString('2p2p');
   output.value += getTierString('t31');
+  output.value += getTierString('t31_2p');
 
   function getTierString(tier) {
     const level = 470;
@@ -76,6 +77,19 @@ set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
 set_bonus=tier31_2pc=1
 set_bonus=tier31_4pc=1
+`;
+        break;
+      case 't31_2p':
+        result += `
+copy="t31_2p ${level}"
+
+# Talents copied from your input, manually change it if t31 2p uses a different build
+talents=${talents}
+
+set_bonus=tier30_2pc=0
+set_bonus=tier30_4pc=0
+set_bonus=tier31_2pc=1
+set_bonus=tier31_4pc=0
 `;
         break;
     }
