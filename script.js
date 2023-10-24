@@ -7,6 +7,7 @@ function update(event) {
   let key;
   let value;
   let talents;
+  let isFirstLine = true;
   let isGearSection = false;
   let gear = new Map();
 
@@ -16,12 +17,17 @@ function update(event) {
     if (line.startsWith('#') || line.trim() == '') continue;
 
     [key, value] = getKeyValue(line);
+    if (isFirstLine) {
+      isFirstLine = false;
+      value = `"${
+        value.slice(1, value.length-1)} t30 4p 470/447"`;
+    }
     if (key == 'talents') talents = value;
     if (key == 'head') isGearSection = true;
     if (isGearSection) {
       gear.set(key, value);
     } else {
-      output.value += line + '\n';
+      output.value += `${key}=${value}\n`;
     }
   }
 
