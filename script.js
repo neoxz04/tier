@@ -6,6 +6,7 @@ input.addEventListener('input', update);
 function update(event) {
   let key;
   let value;
+  let talents;
   let isGearSection = false;
   let gear = new Map();
 
@@ -15,6 +16,7 @@ function update(event) {
     if (line.startsWith('#') || line.trim() == '') continue;
 
     [key, value] = getKeyValue(line);
+    if (key == 'talents') talents = value;
     if (key == 'head') isGearSection = true;
     if (isGearSection) {
       gear.set(key, value);
@@ -47,6 +49,10 @@ set_bonus=tier31_4pc=0
         tierSlots = ['shoulder', 'hands'];
         result += `
 copy="2p_2p ${level}/${altLevel}"
+
+# Talents copied from your input, manually change it if 2p 2p uses a different build
+talents=${talents}
+
 set_bonus=tier30_2pc=1
 set_bonus=tier30_4pc=0
 set_bonus=tier31_2pc=1
@@ -56,6 +62,10 @@ set_bonus=tier31_4pc=0
       case 't31':
         result += `
 copy="t31_4p ${level}"
+
+# Talents copied from your input, manually change it if t31 4p uses a different build
+talents=${talents}
+
 set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
 set_bonus=tier31_2pc=1
@@ -69,7 +79,7 @@ set_bonus=tier31_4pc=1
       result += `${key}=${value},ilevel=${
         tierSlots.includes(key) ? altLevel : level}\n`;
     }
-    
+
     return result;
   }
 
