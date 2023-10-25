@@ -3,6 +3,8 @@ const output = document.querySelector('#output');
 
 input.addEventListener('input', update);
 for (let inputElement of document.querySelectorAll('input')) {
+  inputElement.addEventListener('focus',
+      event => event.target.select());
   inputElement.addEventListener('input', update);
 }
 
