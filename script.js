@@ -2,17 +2,22 @@ const input = document.querySelector('#input');
 const output = document.querySelector('#output');
 
 input.addEventListener('input', update);
+for (let inputElement of document.querySelectorAll('input')) {
+  inputElement.addEventListener('input', update);
+}
 
 function update(event) {
   let key;
   let value;
-  let talents;
+  let inputTalent;
   let isFirstLine = true;
   let isGearSection = false;
-  let gear = new Map();
+  const tierNames = ['t30', 'both_2p', 't31_2p', 't31'];
+  const gear = new Map();
 
   output.value = 'ptr=1\n\n';
 
+  // Parse input
   for (let line of input.value.split('\n')) {
     if (line.startsWith('#') || line.trim() == '') continue;
 
@@ -22,21 +27,48 @@ function update(event) {
       value = `"${
         value.slice(1, value.length-1)} t30 4p 470/447"`;
     }
-    if (key == 'talents') talents = value;
+    if (key == 'talents') inputTalent = value;
     if (key == 'head') isGearSection = true;
     if (isGearSection) {
       gear.set(key, value);
-    } else {
+    } else if (key != 'talents') {
       output.value += `${key}=${value}\n`;
     }
   }
 
-  document.cookie = `talents=${talents}; max-age=${60*60*24*180}`;
+  // Populate talents
+  let talents = getTalentsFromCookie();
+  for (let tier of tierNames) {
+    const inputElement = document.querySelector(`#${tier}`);
+    const inputValue = inputElement.value.trim();
+    if (inputValue) {
+      talents.set(tier, inputValue);
+    } else if (talents.has(tier)) {
+      inputElement.value = talents.get(tier);
+    } else {
+      talents.set(tier, inputTalent);
+      inputElement.value = inputTalent;
+    }
+    inputElement.style.color =
+        (talents.get(tier) == inputTalent) ? 'grey' : 'black';
+  }
+  document.cookie = `talents=${
+      JSON.stringify(Array.from(talents.entries()))}; max-time=${60*60*24*180}`;
 
-  output.value += getTierString('t30');
-  output.value += getTierString('2p2p');
-  output.value += getTierString('t31_2p');
-  output.value += getTierString('t31');
+  // Write copies
+  for (let tier of tierNames) {
+    output.value += getTierString(tier);
+  }
+
+  function getTalentsFromCookie() {
+    const prefix = 'talents='
+    let talents = document.cookie
+        .split("; ")
+        .find(value => value.startsWith(prefix));
+    return talents
+        ? new Map(JSON.parse(talents.slice(prefix.length)))
+        : new Map();
+  }
 
   function getTierString(tier) {
     const level = 470;
@@ -54,13 +86,10 @@ set_bonus=tier31_2pc=0
 set_bonus=tier31_4pc=0
 `;
         break;
-      case '2p2p':
+      case 'both_2p':
         tierSlots = ['shoulder', 'hands'];
         result += `
 copy="2p_2p ${level}/${altLevel}"
-
-# Talents copied from your input, manually change it if 2p 2p uses a different build
-talents=${talents}
 
 set_bonus=tier30_2pc=1
 set_bonus=tier30_4pc=0
@@ -72,9 +101,6 @@ set_bonus=tier31_4pc=0
         result += `
 copy="t31_4p ${level}"
 
-# Talents copied from your input, manually change it if t31 4p uses a different build
-talents=${talents}
-
 set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
 set_bonus=tier31_2pc=1
@@ -85,9 +111,6 @@ set_bonus=tier31_4pc=1
         result += `
 copy="t31_2p ${level}"
 
-# Talents copied from your input, manually change it if t31 2p uses a different build
-talents=${talents}
-
 set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
 set_bonus=tier31_2pc=1
@@ -96,7 +119,7 @@ set_bonus=tier31_4pc=0
         break;
     }
 
-    result += '\n';
+    result += `\ntalents=${talents.get(tier)}\n\n`;
     for (const [key, value] of gear) {
       result += `${key}=${value},ilevel=${
         tierSlots.includes(key) ? altLevel : level}\n`;
