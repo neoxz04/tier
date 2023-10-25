@@ -31,10 +31,12 @@ function update(event) {
     }
   }
 
+  document.cookie = `talents=${talents}; max-age=${60*60*24*180}`;
+
   output.value += getTierString('t30');
   output.value += getTierString('2p2p');
-  output.value += getTierString('t31');
   output.value += getTierString('t31_2p');
+  output.value += getTierString('t31');
 
   function getTierString(tier) {
     const level = 470;
