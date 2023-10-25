@@ -27,7 +27,7 @@ function update(event) {
     if (isFirstLine) {
       isFirstLine = false;
       value = `"${
-        value.slice(1, value.length-1)} t30 4p 470/447"`;
+        value.slice(1, value.length-1)} t30 4p"`;
     }
     if (key == 'talents') inputTalent = value;
     if (key == 'head') isGearSection = true;
@@ -91,7 +91,7 @@ set_bonus=tier31_4pc=0
       case 'both_2p':
         tierSlots = ['shoulder', 'hands'];
         result += `
-copy="2p_2p ${level}/${altLevel}"
+copy="2p_2p"
 
 set_bonus=tier30_2pc=1
 set_bonus=tier30_4pc=0
@@ -101,7 +101,7 @@ set_bonus=tier31_4pc=0
         break;
       case 't31':
         result += `
-copy="t31_4p ${level}"
+copy="t31_4p"
 
 set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
@@ -111,7 +111,7 @@ set_bonus=tier31_4pc=1
         break;
       case 't31_2p':
         result += `
-copy="t31_2p ${level}"
+copy="t31_2p"
 
 set_bonus=tier30_2pc=0
 set_bonus=tier30_4pc=0
