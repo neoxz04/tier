@@ -15,6 +15,7 @@ function updateTalent(event) {
 function update(event) {
   let key;
   let value;
+  let spec;
   let inputTalent;
   let isFirstLine = true;
   let isGearSection = false;
@@ -33,6 +34,7 @@ function update(event) {
       value = `"${
         value.slice(1, value.length-1)} t30 4p"`;
     }
+    if (key == 'spec') spec = value;
     if (key == 'talents') inputTalent = value;
     if (key == 'head') isGearSection = true;
     if (isGearSection) {
@@ -43,11 +45,11 @@ function update(event) {
   }
 
   // Populate talents
-  let talents = getTalentsFromCookie();
+  let talents = getTalentsFromCookie(spec);
   for (let tier of tierNames) {
     const inputElement = document.querySelector(`#${tier}`);
     const inputValue = inputElement.value.trim();
-    if (inputValue) {
+    if (event.target.id == tier && inputValue) {
       talents.set(tier, inputValue);
     } else if (talents.has(tier)) {
       inputElement.value = talents.get(tier);
@@ -58,7 +60,7 @@ function update(event) {
     inputElement.style.color =
         (talents.get(tier) == inputTalent) ? 'grey' : 'black';
   }
-  document.cookie = `talents=${
+  document.cookie = `${spec}=${
       JSON.stringify(Array.from(talents.entries()))}; max-time=${60*60*24*180}`;
 
   // Write copies
@@ -66,8 +68,8 @@ function update(event) {
     output.value += getTierString(tier);
   }
 
-  function getTalentsFromCookie() {
-    const prefix = 'talents='
+  function getTalentsFromCookie(spec) {
+    const prefix = `${spec}=`
     let talents = document.cookie
         .split("; ")
         .find(value => value.startsWith(prefix));
