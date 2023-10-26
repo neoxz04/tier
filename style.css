@@ -35,5 +35,6 @@ p {
 }
 
 .talent input {
+  font-family: monospace;
   flex: 1;
 }
