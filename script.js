@@ -5,7 +5,11 @@ input.addEventListener('input', update);
 for (let inputElement of document.querySelectorAll('input')) {
   inputElement.addEventListener('focus',
       event => event.target.select());
-  inputElement.addEventListener('input', update);
+  inputElement.addEventListener('input', updateTalent);
+}
+
+function updateTalent(event) {
+  if (event.target.value.trim() != '') update(event);
 }
 
 function update(event) {
